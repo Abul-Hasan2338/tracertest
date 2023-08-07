@@ -1,0 +1,133 @@
+<div class="container my-3">
+      <h3 class = "text-left my-3"> Output </h3>
+      <div class="row">
+        <div class="col-md-3">
+        <div class="card" style="width: 40rem;">
+          
+        </div>
+        
+        </div>
+
+        </div>
+
+        <h3 class = "text-left my-3"> Stress Period 1 </h3>
+
+
+        <div id="container" style="width: 50%;">
+          <canvas id="scatterChart" ></canvas>
+        </div>
+        <script>
+          // Get the data passed from the view
+          var xData = {{ x_data }};
+          var yData = {{ y_data }};
+          // Create the scatter chart
+          var ctx = document.getElementById('scatterChart').getContext('2d');
+          var scatterChart = new Chart(ctx, {
+              type: 'scatter',
+              data: {
+                  datasets: [{
+                      label: 'Stress Period 1',
+                      data: xData.map((value, index) => ({x: value, y: yData[index]})),
+                      backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      pointRadius: 5,
+                      pointHoverRadius: 7
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  scales: {
+                      x: {
+                          type: 'linear',
+                          position: 'bottom', 
+                          scaleLabel:{
+                            display:true,
+                            labelString:'Distance (ft)'
+                          }
+                      },
+                      y: {
+                          type: 'linear',
+                          position: 'left',
+                          scaleLabel:{
+                            display:true,
+                            labelString:'Concentration (mg/L)'
+                          }
+                      }
+                  }
+              }
+          });
+      </script>
+       
+
+      <div>
+
+      </div>
+
+    <div class="container my-3">
+      <h3 class = "text-left my-3"> Stress Period 2 </h3>
+
+
+      <div id="container" style="width: 55%;">
+        <canvas id="scatterChart1" ></canvas>
+      </div>
+      <script>
+        // Get the data passed from the view
+        var xData = {{ t_t }};
+        var yData = {{ Ca }};
+        // Create the scatter chart
+        var ctx = document.getElementById('scatterChart1').getContext('2d');
+        var scatterChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Stress Period 2',
+                    data: xData.map((value, index) => ({x: value, y: yData[index]})),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom', 
+                        scaleLabel:{
+                          display:true,
+                          labelString:'Distance (ft)'
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        scaleLabel:{
+                          display:true,
+                          labelString:'Concentration (mg/L)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+     
+
+    <div>
+
+  
+
+
+
+
+        </div>
+
+      </div>
+
+
+
+    
+
+
+
+      </div>

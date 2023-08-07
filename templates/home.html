@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SWID simulation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Paradis Lab</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link active" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/contact">Contact us</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    <div class="container">
+        <h3 class = "text-left my-3"> Please enter the parameters</h3>
+        <form action="/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="PR">Pumping Rate, Q (gpm) </label>
+              <input type="float" class="form-control" id="PR" name = "PR" step ="any" >
+            </div>
+
+            <div class="form-group">
+                <label for="PT">Pumping time, ti (hour) </label>
+                <input type="float" class="form-control" id="PT" name ="PT" step ="any">
+            </div>
+
+            <div class="form-group">
+              <label for="AT">Aquifer thickness, b (ft) </label>
+              <input type="float" class="form-control" id="AT" name ="AT"  step ="any">
+          </div>
+
+          <div class="form-group">
+              <label for="SCIF">Solute Concentration injection fluid (mg/L) </label>
+              <input type="float" class="form-control" id="SCIF" name ="SCIF"  step ="any">
+          </div>
+
+          <div class="form-group">
+              <label for="SCAF">Solute Concentration aquifer fluid (mg/L) </label>
+              <input type="float" class="form-control" id="SCAF" name ="SCAF" step ="any">
+          </div>
+
+          <div class="form-group">
+              <label for="GWV">Groundwater velocity (ft/day) </label>
+              <input type="float" class="form-control" id="GWV" name ="GWV"  step ="any">
+          </div>
+
+          <div class="form-group">
+              <label for="AD">Aquifer dispersivity (ft) </label>
+              <input type="float" class="form-control" id="AD" name ="AD" step ="any">
+          </div>
+
+          <div class="form-group">
+              <label for="SR">Solute retention </label>
+              <input type="float" class="form-control" id="SR" name ="SR"  step ="any">
+          </div>
+
+            <div class = "form-group" > 
+            <button type="submit" class="btn btn-primary">Click here for Graph</button>
+            </div>
+
+        </form>
+        
+    </div>
+    <div class="container">
+
+      {% if WARNING %}
+        <div class="warning-box">
+            <p>Warning:</p>
+            <ul>
+                {% for text in WARNING %}
+                    <li>{{ text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+      {% endif %}
+
+      <style>
+        .warning-box {
+            background-color: rgb(250, 205, 5);
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+      </style>
+
+    </div>
+
+    <div class="container">
+      <div class="row">
+          <div class="col">
+              <canvas id="scatterChart1"></canvas>
+          </div>
+          <div class="col">
+              <canvas id="scatterChart2"></canvas>
+          </div>
+      </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+
+  <script>
+      // Get the data passed from the view
+      var dataset1_x = {{ x_data }};
+      var dataset1_y1 = {{ y_data }};
+      var dataset1_y2 = {{ Ax }};
+  
+      var dataset2_x = {{ t_t }};
+      var dataset2_y = {{ Ca_Ca }};
+  
+      var text = "Mass Balance = ";
+      var value1 = {{ Mb1 }};
+      var value2 = {{ Mb2 }};
+  
+      // Create the first scatter chart
+      var ctx1 = document.getElementById('scatterChart1').getContext('2d');
+      var scatterChart1 = new Chart(ctx1, {
+          type: 'scatter',
+          data: {
+              datasets: [
+                  {
+                      label: 'Numerical Solution',
+                      data: dataset1_x.map((value, index) => ({ x: value, y: dataset1_y1[index] })),
+                      backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      pointRadius: 1,
+                      pointHoverRadius: 1
+                  },
+                  {
+                      label: 'Analytical Solution',
+                      data: dataset1_x.map((value, index) => ({ x: value, y: dataset1_y2[index] })),
+                      backgroundColor: 'rgba(192, 75, 192, 0.6)',
+                      borderColor: 'rgba(192, 75, 192, 1)',
+                      pointRadius: 1,
+                      pointHoverRadius: 1
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  x: {
+                      type: 'linear',
+                      position: 'bottom',
+                      title: {
+                          display: true,
+                          text: 'Distance (ft)'
+                      }
+                  },
+                  y: {
+                      type: 'linear',
+                      position: 'left',
+                      title: {
+                          display: true,
+                          text: 'Concentration (mg/L)'
+                      }
+                  }
+              },
+          }         
+      });
+  
+      // Create the second scatter chart
+      var ctx2 = document.getElementById('scatterChart2').getContext('2d');
+      var scatterChart2 = new Chart(ctx2, {
+          type: 'scatter',
+          data: {
+              datasets: [
+                  {
+                      label: 'Stress period 2',
+                      data: dataset2_x.map((value, index) => ({ x: value, y: dataset2_y[index] })),
+                      backgroundColor: 'rgba(192, 75, 192, 0.6)',
+                      borderColor: 'rgba(192, 75, 192, 1)',
+                      pointRadius: 1,
+                      pointHoverRadius: 1
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  x: {
+                      type: 'linear',
+                      position: 'bottom',
+                      title: {
+                          display: true,
+                          text: 'Time (days)'
+                      }
+                  },
+                  y: {
+                      type: 'linear',
+                      position: 'left',
+                      title: {
+                          display: true,
+                          text: 'Concentration (mg/L)'
+                      }
+                  }
+              }
+          }
+      });
+  </script>  
+  </body>
+</html>
