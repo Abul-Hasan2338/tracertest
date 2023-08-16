@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-nzgj19z=@*mq$poz4fi8qg$%z622yq%)+%828bbal*09^m^9u#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -117,7 +117,19 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+import os
+STATIC_ROOT = os.path.join(BASE_DIR,"staticfiles")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_url = 'index'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'BOOTSTRAP5'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5' 
+
